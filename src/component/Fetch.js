@@ -1,35 +1,39 @@
 import axios from 'axios'
 
+import {useState, useEffect} from 'react'
+
 const getCurrentUserProfile = () => axios.get('/me');
 
-export default getCurrentUserProfile;
-// const FetchData = async (props) => {
+export const FetchData = () => {
+    let config = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'https://api.spotify.com/v1/track?ids=11dFghVXANMlKmJXsNCbNl',
+        headers: { 
+          'Authorization': 'Bearer BQDJlk8kjBMZ9ZLcDpngdc7cUi7IdetKdvzWZeITtcB6jvsP_7wyHZUrHoXZtW0yheaMZiNTka_C1GL3TubtBZCuW53gIx0dWAcIFLykSA6TWIwrO5dG'
+        }
+      };
+      const [dataTemp, setDataTemp] =  useState("");
+    
+      useEffect(() => {
+        axios.request(config)
+        .then((response) => {
+          setDataTemp(response.data)
+          console.log(JSON.stringify(response.data))
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      
+      }, [])
+      console.log(dataTemp);
 
-//     const [user, setUser] = useState(null)
-//     const {data} = await axios.get('/me', {
-//       headers: {
-//         Authorization: `Bearer ${props.token}`
-//       },
-//       // params: {
-//       //     q: searchKey,
-//       //     type: "artist"
-//       // }
-//     })
-//     setUser(data)
+      const jsonData  = dataTemp && dataTemp.tracks[0];
 
-//     return(
-//         <div>
-//         {/* {user && ( */}
-//             <div>
-//                 <h1>{user.display_name}</h1>
-//                 <p>{user.followers.total} Followers</p>
-//                 {user.images.length && user.images[0].url && (
-//                 <img src={user.images[0].url} alt="Avatar"/>
-//                 )}
-//             </div>
-//             {/* )} */}
-//         </div>
-//     );
-//   }
-
-//   export default FetchData;
+      const temp =  Object.entries(jsonData);
+      console.log(temp[0])
+      return(<div>
+        {temp[0]}
+      </div>);
+    
+}
