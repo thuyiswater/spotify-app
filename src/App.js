@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'
 import getCurrentUserProfile, { FetchData } from "./component/Fetch"
 import { TrackHeader } from './component/TrackHeader';
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {}
 // import FetchData from './component/Fetch';
 
 
@@ -53,24 +54,36 @@ function App() {
   // }, []);
   
   let track_id = "567e29TDzLwZwfDuEpGTwo"
-
-  //get track
-  let config = {
-    method: 'get',
-    maxBodyLength: Infinity,
-    url: 'https://api.spotify.com/v1/tracks/'+track_id,
-    headers: { 
-      'Authorization': 'Bearer BQDJlk8kjBMZ9ZLcDpngdc7cUi7IdetKdvzWZeITtcB6jvsP_7wyHZUrHoXZtW0yheaMZiNTka_C1GL3TubtBZCuW53gIx0dWAcIFLykSA6TWIwrO5dG'
-    }
-  };
+  
+  
+  const [dataPlaylist, setPlaylist] = useState("");
   const [dataTemp, setDataTemp] =  useState("");
   const [isLoading, setIsLoading] = useState(true);
   let temp;
   let artistName;
   let trackName;
 
-
   useEffect(() => {
+    fetchTrack()
+
+    if(isLoading){
+      return (<p>Loading</p>)
+    }
+  }, [])
+
+
+
+  function fetchTrack(){
+    //get track
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: 'https://api.spotify.com/v1/tracks/'+track_id,
+      headers: { 
+        'Authorization': 'Bearer BQDJlk8kjBMZ9ZLcDpngdc7cUi7IdetKdvzWZeITtcB6jvsP_7wyHZUrHoXZtW0yheaMZiNTka_C1GL3TubtBZCuW53gIx0dWAcIFLykSA6TWIwrO5dG'
+      }
+    };
+    
     axios.request(config)
     .then((response) => {
       setDataTemp(response.data)
@@ -81,18 +94,8 @@ function App() {
     .catch((error) => {
       console.log(error);
     });
-
-    if(isLoading){
-      return (<p>Loading</p>)
-    }
-  }, [])
-
-
-
-  // console.log(temp[11][1])
-  // const temp2 = temp.map((ele) => 
-  // console.log(ele[1])) 
-
+  }
+  
   // console.log(temp.map((ele) => ele))
   if(dataTemp){
     temp = Object.entries(dataTemp);
@@ -102,44 +105,47 @@ function App() {
 
 
   return (
-    <div className="App">
-        <header className="App-header">
-            <h1>Spotify API</h1>
-            {!token ?
-            <div>
-              <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
-                    to Spotify</a>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="*" element={<NoPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+//     <div className="App">
+//         <header className="App-header">
+//             <h1>Spotify API</h1>
+//             {!token ?
+//             <div>
+//               <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login
+//                     to Spotify</a>
 
-            </div>
+//             </div>
                 
-                : 
-                <div>
-                  <button onClick={logout}>Logout</button>
-                  {/* <p>{token}</p>
-                  <pre style={{
-                        fontSize: "14px",
-                        textAlign: "center",
-                        // padding: "0 50px",
-                        // marginLeft: "200px"
-                  }}>{ dataTemp && JSON.stringify(dataTemp, null, "\t") }</pre> */}
-                </div>
-}
-            {/* <FetchData/> */}
-            {!isLoading && <TrackHeader trackName={trackName}/>}
+//                 : 
+//                 <div>
+//                   <button onClick={logout}>Logout</button>
+//                 </div>
+// }
+//             {/* <FetchData/> */}
+//             {!isLoading && <TrackHeader trackName={trackName}/>}
             
-            {/* <div>{temp2}</div> */}
+//             {/* <div>{temp2}</div> */}
 
-            {/* {profile && (
-                          <div>
-                            <h1>{profile.display_name}</h1>
-                            <p>{profile.followers.total} Followers</p>
-                            {profile.images.length && profile.images[0].url && (
-                              <img src={profile.images[0].url} alt="Avatar"/>
-                            )}
-                          </div>
-                        )} */}
-        </header>
-    </div>
+//             {/* {profile && (
+//                           <div>
+//                             <h1>{profile.display_name}</h1>
+//                             <p>{profile.followers.total} Followers</p>
+//                             {profile.images.length && profile.images[0].url && (
+//                               <img src={profile.images[0].url} alt="Avatar"/>
+//                             )}
+//                           </div>
+//                         )} */}
+//         </header>
+//     </div>
 
   );
 }
